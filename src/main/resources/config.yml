@@ -5,6 +5,9 @@ shop-limits:
   mvp: 20
   admin: -1  # -1 means unlimited
 
+# Custom player limits
+custom-limits: {}
+
 # Messages
 messages:
   no-permission: "&cYou don't have permission to use this command!"
@@ -14,3 +17,4 @@ messages:
   player-not-found: "&cPlayer not found!"
   shop-limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
   shop-limit-set: "&aShop limit for %player% has been set to %limit%"
+  limit-set: "&aShop limit for %player% has been set to %limit%"

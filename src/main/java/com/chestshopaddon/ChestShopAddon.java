@@ -6,10 +6,12 @@
 
 package com.chestshopaddon;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.chestshopaddon.commands.SetLimitCommand;
 import com.chestshopaddon.commands.ShopsCommand;
 import com.chestshopaddon.config.ConfigManager;
 import com.chestshopaddon.services.ShopLimitService;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
@@ -26,6 +28,7 @@ public class ChestShopAddon extends JavaPlugin {
         
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
+        getCommand("shop").setExecutor(new SetLimitCommand(this));
         
         // Check dependencies
         if (getServer().getPluginManager().getPlugin("ChestShop") == null) {

@@ -33,17 +33,23 @@ public class ShopLimitService {
     }
 
     /**
-     * Gets the shop limit for a player based on permissions and groups.
-     * First checks for direct permission (chestshop.limit.X),
-     * then falls back to LuckPerms group limits if available,
-     * finally uses default limit if no other limit is found.
+     * Gets the shop limit for a player based on:
+     * 1. Custom limit from config
+     * 2. Direct permission (chestshop.limit.X)
+     * 3. LuckPerms group limit
+     * 4. Default limit
      *
      * @param player The player to check limits for
      * @return The maximum number of shops the player can have
-     * @since 1.0
      */
     public int getPlayerShopLimit(Player player) {
-        // Check for direct limit permission first
+        // Check custom limit first
+        String customLimitPath = "custom-limits." + player.getUniqueId().toString();
+        if (plugin.getConfig().contains(customLimitPath)) {
+            return plugin.getConfig().getInt(customLimitPath);
+        }
+
+        // Check for direct limit permission
         for (String permission : player.getEffectivePermissions().stream()
                 .map(p -> p.getPermission())
                 .filter(p -> p.startsWith("chestshop.limit."))

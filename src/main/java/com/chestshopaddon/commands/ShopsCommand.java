@@ -1,26 +1,19 @@
 package com.chestshopaddon.commands;
 
-import com.Acrobot.ChestShop.Configuration.Properties;
-import com.Acrobot.ChestShop.Database.Account;
-import com.Acrobot.ChestShop.Signs.ChestShopSign;
-import com.Acrobot.ChestShop.Utils.uBlock;
-import com.chestshopaddon.ChestShopAddon;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.Acrobot.ChestShop.Utils.uSign;
+import com.Acrobot.ChestShop.Signs.ChestShopSign;
+import com.chestshopaddon.ChestShopAddon;
 
 public class ShopsCommand implements CommandExecutor {
     private final ChestShopAddon plugin;

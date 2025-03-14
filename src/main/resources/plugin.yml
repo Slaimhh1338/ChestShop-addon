@@ -13,6 +13,10 @@ commands:
     usage: /<command> [player]
     aliases: [shoplist]
     permission: chestshop.addon.shops
+  shop:
+    description: Shop management commands
+    usage: /<command> setlimit <player> <limit>
+    aliases: [chestshop]
 
 permissions:
   chestshop.addon.shops:
@@ -27,3 +31,6 @@ permissions:
     children:
       chestshop.addon.shops.others: true
       chestshop.addon.setlimit: true
+  chestshop.addon.setlimit:
+    description: Allows setting shop limits for players
+    default: op
