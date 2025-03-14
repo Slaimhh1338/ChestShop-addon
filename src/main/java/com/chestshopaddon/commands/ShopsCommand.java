@@ -15,10 +15,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.Acrobot.ChestShop.Utils.uSign;
 
 public class ShopsCommand implements CommandExecutor {
     private final ChestShopAddon plugin;
@@ -77,7 +79,7 @@ public class ShopsCommand implements CommandExecutor {
 
         for (Location loc : shops) {
             Sign sign = (Sign) loc.getBlock().getState();
-            String item = ChestShopSign.getItem(sign);
+            String item = ((Sign) sign).getLine(3); // Get item name from the 4th line
             
             sender.sendMessage(config.getString("messages.shop-format")
                     .replace("%world%", loc.getWorld().getName())
@@ -99,7 +101,7 @@ public class ShopsCommand implements CommandExecutor {
         for (org.bukkit.World world : Bukkit.getWorlds()) {
             for (Sign sign : findShopSigns(world)) {
                 if (ChestShopSign.isValid(sign) && 
-                    ChestShopSign.getOwner(sign).equalsIgnoreCase(playerName)) {
+                    sign.getLine(0).equalsIgnoreCase(playerName)) { // Get owner from the 1st line
                     shops.add(sign.getLocation());
                 }
             }

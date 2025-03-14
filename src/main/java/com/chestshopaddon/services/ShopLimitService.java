@@ -8,6 +8,11 @@ import com.chestshopaddon.ChestShopAddon;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 
+/**
+ * Service for managing shop limits with LuckPerms integration.
+ * @since 1.0
+ * @requires Java 16+
+ */
 public class ShopLimitService {
     private final ChestShopAddon plugin;
     private LuckPerms luckPerms;
@@ -27,6 +32,16 @@ public class ShopLimitService {
         }
     }
 
+    /**
+     * Gets the shop limit for a player based on permissions and groups.
+     * First checks for direct permission (chestshop.limit.X),
+     * then falls back to LuckPerms group limits if available,
+     * finally uses default limit if no other limit is found.
+     *
+     * @param player The player to check limits for
+     * @return The maximum number of shops the player can have
+     * @since 1.0
+     */
     public int getPlayerShopLimit(Player player) {
         // Check for direct limit permission first
         for (String permission : player.getEffectivePermissions().stream()
