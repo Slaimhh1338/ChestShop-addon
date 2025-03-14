@@ -12,3 +12,5 @@ messages:
   shops-header: "&6=== Shops owned by %player% ==="
   shop-format: "&7- Location: %world% %x%, %y%, %z% &8(&7Item: %item%&8)"
   player-not-found: "&cPlayer not found!"
+  shop-limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
+  shop-limit-set: "&aShop limit for %player% has been set to %limit%"

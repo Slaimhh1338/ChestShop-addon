@@ -8,10 +8,12 @@ package com.chestshopaddon;
 
 import com.chestshopaddon.commands.ShopsCommand;
 import com.chestshopaddon.config.ConfigManager;
+import com.chestshopaddon.services.ShopLimitService;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
+    private ShopLimitService shopLimitService;
 
     @Override
     public void onEnable() {
@@ -19,10 +21,13 @@ public class ChestShopAddon extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         configManager.loadConfig();
         
+        // Initialize services
+        this.shopLimitService = new ShopLimitService(this);
+        
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
         
-        // Check if ChestShop is present
+        // Check dependencies
         if (getServer().getPluginManager().getPlugin("ChestShop") == null) {
             getLogger().severe("ChestShop not found! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
@@ -39,5 +44,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public ShopLimitService getShopLimitService() {
+        return shopLimitService;
     }
 }
