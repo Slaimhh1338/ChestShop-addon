@@ -1,0 +1,14 @@
+# Default shop limits for permission groups
+shop-limits:
+  default: 5
+  vip: 10
+  mvp: 20
+  admin: -1  # -1 means unlimited
+
+# Messages
+messages:
+  no-permission: "&cYou don't have permission to use this command!"
+  no-shops: "&cNo shops found."
+  shops-header: "&6=== Shops owned by %player% ==="
+  shop-format: "&7- Location: %world% %x%, %y%, %z% &8(&7Item: %item%&8)"
+  player-not-found: "&cPlayer not found!"

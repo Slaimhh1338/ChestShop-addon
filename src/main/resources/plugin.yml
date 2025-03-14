@@ -1,0 +1,28 @@
+name: ChestShopAddon
+version: '${project.version}'
+main: com.chestshopaddon.ChestShopAddon
+api-version: '1.21'
+depend: [ChestShop]
+authors: [Slaimhh1337]
+description: Addon for ChestShop with additional features
+
+commands:
+  shops:
+    description: View shops of a player
+    usage: /<command> [player]
+    aliases: [shoplist]
+    permission: chestshop.addon.shops
+
+permissions:
+  chestshop.addon.shops:
+    description: Allows using /shops command for own shops
+    default: true
+  chestshop.addon.shops.others:
+    description: Allows viewing other players' shops
+    default: op
+  chestshop.addon.admin:
+    description: Gives access to all admin features
+    default: op
+    children:
+      chestshop.addon.shops.others: true
+      chestshop.addon.setlimit: true
