@@ -1,39 +1,57 @@
 package com.chestshopaddon.services;
 
-import com.chestshopaddon.ChestShopAddon;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+import com.chestshopaddon.ChestShopAddon;
+
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.user.User;
 
 public class ShopLimitService {
     private final ChestShopAddon plugin;
+    private LuckPerms luckPerms;
 
     public ShopLimitService(ChestShopAddon plugin) {
         this.plugin = plugin;
+        setupLuckPerms();
+    }
+
+    private void setupLuckPerms() {
+        if (plugin.getServer().getPluginManager().getPlugin("LuckPerms") != null) {
+            RegisteredServiceProvider<LuckPerms> provider = plugin.getServer().getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) {
+                luckPerms = provider.getProvider();
+                plugin.getLogger().info("Successfully hooked into LuckPerms!");
+            }
+        }
     }
 
     public int getPlayerShopLimit(Player player) {
         // Check for direct limit permission first
-        for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {
-            String permission = perm.getPermission();
-            if (permission.startsWith("chestshop.limit.")) {
-                try {
-                    return Integer.parseInt(permission.substring("chestshop.limit.".length()));
-                } catch (NumberFormatException ignored) {}
+        for (String permission : player.getEffectivePermissions().stream()
+                .map(p -> p.getPermission())
+                .filter(p -> p.startsWith("chestshop.limit."))
+                .toList()) {
+            try {
+                return Integer.parseInt(permission.substring("chestshop.limit.".length()));
+            } catch (NumberFormatException ignored) {}
+        }
+
+        // If LuckPerms is available, get the player's primary group
+        if (luckPerms != null) {
+            User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+            if (user != null) {
+                String primaryGroup = user.getPrimaryGroup();
+                return plugin.getConfigManager().getShopLimit(primaryGroup);
             }
         }
 
-        // If no direct permission, check group limits from config
-        return plugin.getConfigManager().getShopLimit(getPlayerGroup(player));
+        // Fallback to default group limit
+        return plugin.getConfigManager().getShopLimit("default");
     }
 
-    private String getPlayerGroup(Player player) {
-        // Check primary group permission
-        for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {
-            String permission = perm.getPermission();
-            if (permission.startsWith("group.")) {
-                return permission.substring("group.".length());
-            }
-        }
-        return "default";
+    public boolean hasLuckPerms() {
+        return luckPerms != null;
     }
 }

@@ -62,6 +62,10 @@
           <id>jitpack.io</id>
           <url>https://jitpack.io</url>
       </repository>
+      <repository>
+          <id>luckperms</id>
+          <url>https://repo.lucko.me/</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -75,6 +79,12 @@
           <groupId>com.github.ChestShop-authors</groupId>
           <artifactId>ChestShop-3</artifactId>
           <version>3.12</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>net.luckperms</groupId>
+          <artifactId>api</artifactId>
+          <version>5.4</version>
           <scope>provided</scope>
       </dependency>
   </dependencies>
