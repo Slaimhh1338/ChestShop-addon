@@ -16,6 +16,20 @@ A Minecraft plugin addon for ChestShop that adds additional features.
 3. Place the jar file in your plugins folder
 4. Restart your server
 
+## License
+
+This project is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License.
+
+This means you can:
+- Download and use the plugin for free
+- Share the plugin with others
+- Use the plugin for any purpose, including commercial use
+
+But you cannot:
+- Modify the code and distribute the modified version without explicit permission from the owner
+
+For more details, see the [LICENSE](LICENSE) file.
+
 ## Configuration
 
 ```yaml
@@ -33,17 +47,3 @@ messages:
   shops-header: "&6=== Shops owned by %player% ==="
   shop-format: "&7- Location: %world% %x%, %y%, %z% &8(&7Item: %item%&8)"
   player-not-found: "&cPlayer not found!"
-
-## License
-
-This project is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License.
-
-This means you can:
-- Download and use the plugin for free
-- Share the plugin with others
-- Use the plugin for any purpose, including commercial use
-
-But you cannot:
-- Modify the code and distribute the modified version without explicit permission from the owner
-
-For more details, see the [LICENSE](LICENSE) file.
