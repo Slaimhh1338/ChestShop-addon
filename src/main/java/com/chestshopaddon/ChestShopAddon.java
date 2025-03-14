@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024 Slaimhh1337
+ * Licensed under Creative Commons Attribution-NoDerivatives 4.0 International
+ * See LICENSE.md for full license text
+ */
+
 package com.chestshopaddon;
 
 import com.chestshopaddon.commands.ShopsCommand;
