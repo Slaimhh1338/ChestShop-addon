@@ -1,19 +1,16 @@
 package com.chestshopaddon.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.chestshopaddon.ChestShopAddon;
+import com.chestshopaddon.database.ShopInfo;
 
 public class ShopsCommand implements CommandExecutor {
     private final ChestShopAddon plugin;
@@ -26,94 +23,51 @@ public class ShopsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         FileConfiguration config = plugin.getConfig();
 
-        if (!(sender instanceof Player) && args.length == 0) {
-            sender.sendMessage(config.getString("messages.player-only", "§cThis command can only be used by players!"));
-            return true;
-        }
-
         String targetPlayer;
         if (args.length > 0 && sender.hasPermission("chestshop.addon.shops.others")) {
             targetPlayer = args[0];
         } else if (sender instanceof Player) {
             if (!sender.hasPermission("chestshop.addon.shops")) {
-                sender.sendMessage(config.getString("messages.no-permission"));
+                sender.sendMessage(config.getString("messages.no-permission")
+                        .replace("&", "§"));
                 return true;
             }
             targetPlayer = sender.getName();
         } else {
-            return false;
+            sender.sendMessage(config.getString("messages.player-only")
+                    .replace("&", "§"));
+            return true;
         }
 
-        showPlayerShops(sender, targetPlayer);
-        return true;
-    }
-
-    private void showPlayerShops(CommandSender sender, String playerName) {
-        FileConfiguration config = plugin.getConfig();
-        Player target = Bukkit.getPlayer(playerName);
-        
-        if (target == null && !hasPlayedBefore(playerName)) {
+        Player target = Bukkit.getPlayer(targetPlayer);
+        if (target == null && !Bukkit.getOfflinePlayer(targetPlayer).hasPlayedBefore()) {
             sender.sendMessage(config.getString("messages.player-not-found")
                     .replace("&", "§"));
-            return;
+            return true;
         }
 
-        List<Location> shops = findPlayerShops(playerName);
+        List<ShopInfo> shops = plugin.getDatabaseManager().getPlayerShops(targetPlayer);
         
         if (shops.isEmpty()) {
             sender.sendMessage(config.getString("messages.no-shops")
                     .replace("&", "§"));
-            return;
+            return true;
         }
 
         sender.sendMessage(config.getString("messages.shops-header")
-                .replace("%player%", playerName)
+                .replace("%player%", targetPlayer)
                 .replace("&", "§"));
 
-        for (Location loc : shops) {
-            Sign sign = (Sign) loc.getBlock().getState();
-            String item = ((Sign) sign).getLine(3); // Get item name from the 4th line
-            
+        for (ShopInfo shop : shops) {
             sender.sendMessage(config.getString("messages.shop-format")
-                    .replace("%world%", loc.getWorld().getName())
-                    .replace("%x%", String.valueOf(loc.getBlockX()))
-                    .replace("%y%", String.valueOf(loc.getBlockY()))
-                    .replace("%z%", String.valueOf(loc.getBlockZ()))
-                    .replace("%item%", item)
+                    .replace("%world%", shop.getWorld())
+                    .replace("%x%", String.valueOf(shop.getX()))
+                    .replace("%y%", String.valueOf(shop.getY()))
+                    .replace("%z%", String.valueOf(shop.getZ()))
+                    .replace("%item%", shop.getItem())
                     .replace("&", "§"));
         }
-    }
-
-    private boolean hasPlayedBefore(String playerName) {
-        return Bukkit.getOfflinePlayer(playerName).hasPlayedBefore();
-    }
-
-    private List<Location> findPlayerShops(String playerName) {
-        List<Location> shops = new ArrayList<>();
         
-        for (org.bukkit.World world : Bukkit.getWorlds()) {
-            for (Sign sign : findShopSigns(world)) {
-                if (ChestShopSign.isValid(sign) && 
-                    sign.getLine(0).equalsIgnoreCase(playerName)) { // Get owner from the 1st line
-                    shops.add(sign.getLocation());
-                }
-            }
-        }
-        
-        return shops;
-    }
-
-    private List<Sign> findShopSigns(org.bukkit.World world) {
-        List<Sign> signs = new ArrayList<>();
-        
-        for (org.bukkit.Chunk chunk : world.getLoadedChunks()) {
-            for (org.bukkit.block.BlockState state : chunk.getTileEntities()) {
-                if (state instanceof Sign && ChestShopSign.isValid((Sign) state)) {
-                    signs.add((Sign) state);
-                }
-            }
-        }
-        
-        return signs;
+        return true;
     }
 }
