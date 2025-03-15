@@ -5,6 +5,11 @@
 *.ipr
 *.iws
 
+# VSCode specific files
+.vscode/
+*.code-workspace
+.history/
+
 # IntelliJ
 out/
 
