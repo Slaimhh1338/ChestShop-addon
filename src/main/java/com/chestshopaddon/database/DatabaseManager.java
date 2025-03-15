@@ -1,10 +1,19 @@
 package com.chestshopaddon.database;
 
 import com.chestshopaddon.ChestShopAddon;
+import com.chestshopaddon.services.CustomItemService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseManager {
     private final ChestShopAddon plugin;
@@ -33,10 +42,18 @@ public class DatabaseManager {
                     "y INTEGER NOT NULL," +
                     "z INTEGER NOT NULL," +
                     "item VARCHAR(64) NOT NULL," +
+                    "item_meta TEXT," +
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                     ")"
                 );
                 
+                // Add item_meta column if it doesn't exist
+                try {
+                    stmt.execute("ALTER TABLE shops ADD COLUMN item_meta TEXT");
+                } catch (SQLException e) {
+                    // Column probably already exists
+                }
+
                 stmt.execute(
                     "CREATE INDEX IF NOT EXISTS idx_owner ON shops(owner)"
                 );
@@ -46,8 +63,8 @@ public class DatabaseManager {
         }
     }
 
-    public void addShop(String owner, Location location, String item) {
-        String sql = "INSERT INTO shops (owner, world, x, y, z, item) VALUES (?, ?, ?, ?, ?, ?)";
+    public void addShop(String owner, Location location, ItemStack item) {
+        String sql = "INSERT INTO shops (owner, world, x, y, z, item, item_meta) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, owner);
@@ -55,7 +72,11 @@ public class DatabaseManager {
             pstmt.setInt(3, location.getBlockX());
             pstmt.setInt(4, location.getBlockY());
             pstmt.setInt(5, location.getBlockZ());
-            pstmt.setString(6, item);
+            
+            CustomItemService itemService = plugin.getCustomItemService();
+            pstmt.setString(6, item.getType().name());
+            pstmt.setString(7, itemService.isCustomItem(item) ? serializeItemMeta(item) : null);
+            
             pstmt.executeUpdate();
         } catch (SQLException e) {
             plugin.getLogger().warning("Failed to add shop: " + e.getMessage());
@@ -99,6 +120,49 @@ public class DatabaseManager {
         }
         
         return shops;
+    }
+
+    private String serializeItemMeta(ItemStack item) {
+        if (!item.hasItemMeta()) return null;
+        
+        ItemMeta meta = item.getItemMeta();
+        Map<String, Object> serialized = new HashMap<>();
+        
+        if (meta.hasDisplayName()) {
+            serialized.put("name", meta.getDisplayName());
+        }
+        
+        if (meta.hasLore()) {
+            serialized.put("lore", meta.getLore());
+        }
+        
+        return new Gson().toJson(serialized);
+    }
+
+    private ItemStack deserializeItem(String type, String metaJson) {
+        ItemStack item = new ItemStack(Material.valueOf(type));
+        if (metaJson == null) return item;
+        
+        try {
+            Map<String, Object> serialized = new Gson().fromJson(metaJson, 
+                new TypeToken<Map<String, Object>>(){}.getType());
+            
+            ItemMeta meta = item.getItemMeta();
+            
+            if (serialized.containsKey("name")) {
+                meta.setDisplayName((String) serialized.get("name"));
+            }
+            
+            if (serialized.containsKey("lore")) {
+                meta.setLore((List<String>) serialized.get("lore"));
+            }
+            
+            item.setItemMeta(meta);
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to deserialize item meta: " + e.getMessage());
+        }
+        
+        return item;
     }
 
     public void close() {

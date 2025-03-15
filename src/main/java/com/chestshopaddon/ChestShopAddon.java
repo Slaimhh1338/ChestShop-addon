@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Slaimhh1337
+ * Copyright (c) 2025 Slaimhh1337
  * Licensed under Creative Commons Attribution-NoDerivatives 4.0 International
  * See LICENSE for full license text
  */
