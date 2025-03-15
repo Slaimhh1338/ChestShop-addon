@@ -3,7 +3,7 @@ version: '${project.version}'
 main: com.chestshopaddon.ChestShopAddon
 api-version: '1.21'
 depend: [ChestShop]
-softdepend: [LuckPerms]
+softdepend: [HolographicDisplays, LuckPerms]
 authors: [Slaimhh1337]
 description: Addon for ChestShop with additional features
 

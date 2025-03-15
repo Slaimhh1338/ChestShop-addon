@@ -14,15 +14,24 @@ import com.chestshopaddon.config.ConfigManager;
 import com.chestshopaddon.database.DatabaseManager;
 import com.chestshopaddon.services.CustomItemService;
 import com.chestshopaddon.services.ShopLimitService;
+import com.chestshopaddon.services.HologramService;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
     private ShopLimitService shopLimitService;
     private DatabaseManager databaseManager;
     private CustomItemService customItemService;
+    private HologramService hologramService;
 
     @Override
     public void onEnable() {
+        // Check HolographicDisplays dependency
+        if (!getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            getLogger().severe("HolographicDisplays not found! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // Initialize config
         this.configManager = new ConfigManager(this);
         configManager.loadConfig();
@@ -31,6 +40,7 @@ public class ChestShopAddon extends JavaPlugin {
         this.shopLimitService = new ShopLimitService(this);
         this.databaseManager = new DatabaseManager(this);
         this.customItemService = new CustomItemService();
+        this.hologramService = new HologramService(this);
         
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
@@ -48,6 +58,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (hologramService != null) {
+            hologramService.removeAllHolograms();
+        }
         if (databaseManager != null) {
             databaseManager.close();
         }
@@ -68,5 +81,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     public CustomItemService getCustomItemService() {
         return customItemService;
+    }
+
+    public HologramService getHologramService() {
+        return hologramService;
     }
 }
