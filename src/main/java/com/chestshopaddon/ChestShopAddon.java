@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 Slaimhh1337
  * Licensed under Creative Commons Attribution-NoDerivatives 4.0 International
- * See LICENSE.md for full license text
+ * See LICENSE for full license text
  */
 
 package com.chestshopaddon;
@@ -11,11 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.chestshopaddon.commands.SetLimitCommand;
 import com.chestshopaddon.commands.ShopsCommand;
 import com.chestshopaddon.config.ConfigManager;
+import com.chestshopaddon.database.DatabaseManager;
 import com.chestshopaddon.services.ShopLimitService;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
     private ShopLimitService shopLimitService;
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -25,6 +27,7 @@ public class ChestShopAddon extends JavaPlugin {
         
         // Initialize services
         this.shopLimitService = new ShopLimitService(this);
+        this.databaseManager = new DatabaseManager(this);
         
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
@@ -42,6 +45,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
         getLogger().info("ChestShop Addon has been disabled!");
     }
 
@@ -51,5 +57,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     public ShopLimitService getShopLimitService() {
         return shopLimitService;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 }
