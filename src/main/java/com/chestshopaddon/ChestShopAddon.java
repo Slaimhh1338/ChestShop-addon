@@ -12,9 +12,10 @@ import com.chestshopaddon.commands.SetLimitCommand;
 import com.chestshopaddon.commands.ShopsCommand;
 import com.chestshopaddon.config.ConfigManager;
 import com.chestshopaddon.database.DatabaseManager;
+import com.chestshopaddon.listeners.ShopListener;
 import com.chestshopaddon.services.CustomItemService;
-import com.chestshopaddon.services.ShopLimitService;
 import com.chestshopaddon.services.HologramService;
+import com.chestshopaddon.services.ShopLimitService;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
@@ -45,6 +46,9 @@ public class ChestShopAddon extends JavaPlugin {
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
         getCommand("shop").setExecutor(new SetLimitCommand(this));
+        
+        // Register listeners
+        getServer().getPluginManager().registerEvents(new ShopListener(this), this);
         
         // Check dependencies
         if (getServer().getPluginManager().getPlugin("ChestShop") == null) {
