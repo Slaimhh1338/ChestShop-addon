@@ -12,12 +12,14 @@ import com.chestshopaddon.commands.SetLimitCommand;
 import com.chestshopaddon.commands.ShopsCommand;
 import com.chestshopaddon.config.ConfigManager;
 import com.chestshopaddon.database.DatabaseManager;
+import com.chestshopaddon.services.CustomItemService;
 import com.chestshopaddon.services.ShopLimitService;
 
 public class ChestShopAddon extends JavaPlugin {
     private ConfigManager configManager;
     private ShopLimitService shopLimitService;
     private DatabaseManager databaseManager;
+    private CustomItemService customItemService;
 
     @Override
     public void onEnable() {
@@ -28,6 +30,7 @@ public class ChestShopAddon extends JavaPlugin {
         // Initialize services
         this.shopLimitService = new ShopLimitService(this);
         this.databaseManager = new DatabaseManager(this);
+        this.customItemService = new CustomItemService();
         
         // Register commands
         getCommand("shops").setExecutor(new ShopsCommand(this));
@@ -61,5 +64,9 @@ public class ChestShopAddon extends JavaPlugin {
 
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
+    }
+
+    public CustomItemService getCustomItemService() {
+        return customItemService;
     }
 }
