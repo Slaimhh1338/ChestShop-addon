@@ -1,9 +1,11 @@
 package com.chestshopaddon.listeners;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
 import com.chestshopaddon.ChestShopAddon;
@@ -15,7 +17,21 @@ public class ShopListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPreShopCreate(PreShopCreationEvent event) {
+        // Check shop limit
+        int currentShops = plugin.getDatabaseManager().getPlayerShopCount(event.getPlayer().getName());
+        int shopLimit = plugin.getShopLimitService().getPlayerShopLimit(event.getPlayer());
+
+        if (shopLimit != -1 && currentShops >= shopLimit) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(plugin.getConfig().getString("messages.limit-reached")
+                    .replace("%limit%", String.valueOf(shopLimit))
+                    .replace("&", "§"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onShopCreate(ShopCreatedEvent event) {
         // Convert item name to ItemStack
         String itemName = event.getSign().getLine(3);

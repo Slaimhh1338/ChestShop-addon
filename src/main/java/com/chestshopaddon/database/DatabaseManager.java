@@ -1,19 +1,25 @@
 package com.chestshopaddon.database;
 
-import com.chestshopaddon.ChestShopAddon;
-import com.chestshopaddon.services.CustomItemService;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.chestshopaddon.ChestShopAddon;
+import com.chestshopaddon.services.CustomItemService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class DatabaseManager {
     private final ChestShopAddon plugin;
@@ -120,6 +126,23 @@ public class DatabaseManager {
         }
         
         return shops;
+    }
+
+    public int getPlayerShopCount(String owner) {
+        String sql = "SELECT COUNT(*) FROM shops WHERE owner = ?";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, owner);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to count shops: " + e.getMessage());
+        }
+        
+        return 0;
     }
 
     private String serializeItemMeta(ItemStack item) {

@@ -17,6 +17,10 @@ commands:
     description: Shop management commands
     usage: /<command> setlimit <player> <limit>
     aliases: [chestshop]
+  shophologram:
+    description: Toggle shop holograms
+    usage: /<command> <on|off>
+    permission: chestshop.addon.holograms
 
 permissions:
   chestshop.addon.shops:
@@ -33,4 +37,7 @@ permissions:
       chestshop.addon.setlimit: true
   chestshop.addon.setlimit:
     description: Allows setting shop limits for players
+    default: op
+  chestshop.addon.holograms:
+    description: Allows toggling shop holograms
     default: op

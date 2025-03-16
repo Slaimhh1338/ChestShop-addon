@@ -18,3 +18,4 @@ messages:
   shop-limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
   shop-limit-set: "&aShop limit for %player% has been set to %limit%"
   limit-set: "&aShop limit for %player% has been set to %limit%"
+  limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
