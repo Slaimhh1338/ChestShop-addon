@@ -1,44 +1,84 @@
 # ChestShop Addon
 
-A Minecraft plugin addon for ChestShop that adds additional features.
+A Minecraft plugin addon for ChestShop that adds additional features like shop limits, custom items support, and holographic displays.
 
 ## Features
 
+### Shop Management
 - `/shops` command to view your own shops and their coordinates
 - `/shops <player>` command for admins to view other players' shops
+- SQLite database for efficient shop storage and querying
+
+### Shop Limits
 - Configurable shop limits per permission group
-- Integration with ChestShop's sign system
+- Support for LuckPerms groups
+- Direct permission limits (`chestshop.limit.X`)
+- Custom per-player limits via `/shop setlimit`
+- `-1` for unlimited shops
+
+### Custom Items
+- Support for custom named items
+- Custom item metadata storage
+- Item display names in shop listings
+
+### Holographic Displays
+- Floating holograms above shops
+- Shows shop owner and item being sold
+- Toggle holograms with `/shophologram <on|off>`
+- Automatic hologram cleanup
+
+## Dependencies
+- [ChestShop](https://www.spigotmc.org/resources/chestshop.51856/) (Required)
+- [HolographicDisplays](https://dev.bukkit.org/projects/holographic-displays) (Required)
+- [LuckPerms](https://luckperms.net/) (Optional, for group limits)
 
 ## Installation
 
-1. Make sure you have [ChestShop](https://www.spigotmc.org/resources/chestshop.51856/) installed
-2. Download the latest release from the releases page
-3. Place the jar file in your plugins folder
+1. Install required dependencies
+2. Download the latest release
+3. Place the jar in your plugins folder
 4. Restart your server
+5. Configure in `plugins/ChestShopAddon/config.yml`
 
-## License
+## Permissions
 
-This project is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License.
+```yaml
+chestshop.addon.shops:
+  description: Allows using /shops command for own shops
+  default: true
 
-This means you can:
-- Download and use the plugin for free
-- Share the plugin with others
-- Use the plugin for any purpose, including commercial use
+chestshop.addon.shops.others:
+  description: Allows viewing other players' shops
+  default: op
 
-But you cannot:
-- Modify the code and distribute the modified version without explicit permission from the owner
+chestshop.addon.admin:
+  description: Gives access to all admin features
+  default: op
+  children:
+    chestshop.addon.shops.others: true
+    chestshop.addon.setlimit: true
 
-For more details, see the [LICENSE](LICENSE) file.
+chestshop.addon.setlimit:
+  description: Allows setting shop limits for players
+  default: op
+
+chestshop.addon.holograms:
+  description: Allows toggling shop holograms
+  default: op
+```
 
 ## Configuration
 
 ```yaml
-# Default shop limits for permission groups
+# Shop limits per group
 shop-limits:
   default: 5
   vip: 10
   mvp: 20
   admin: -1  # -1 means unlimited
+
+# Custom player limits
+custom-limits: {}
 
 # Messages
 messages:
@@ -47,3 +87,22 @@ messages:
   shops-header: "&6=== Shops owned by %player% ==="
   shop-format: "&7- Location: %world% %x%, %y%, %z% &8(&7Item: %item%&8)"
   player-not-found: "&cPlayer not found!"
+  shop-limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
+  shop-limit-set: "&aShop limit for %player% has been set to %limit%"
+  limit-set: "&aShop limit for %player% has been set to %limit%"
+  limit-reached: "&cYou have reached your shop limit! (%limit% shops)"
+```
+
+## License
+
+This project is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License.
+
+You can:
+- Download and use the plugin for free
+- Share the plugin with others
+- Use the plugin for any purpose, including commercial use
+
+You cannot:
+- Modify the code and distribute the modified version without explicit permission from the owner
+
+For more details, see the [LICENSE](LICENSE) file.
