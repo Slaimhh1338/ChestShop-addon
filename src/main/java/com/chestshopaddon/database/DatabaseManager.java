@@ -81,7 +81,7 @@ public class DatabaseManager {
             
             CustomItemService itemService = plugin.getCustomItemService();
             pstmt.setString(6, item.getType().name());
-            pstmt.setString(7, itemService.isCustomItem(item) ? serializeItemMeta(item) : null);
+            pstmt.setString(7, itemService.serializeItem(item)); // Сохраняем полные NBT данные
             
             pstmt.executeUpdate();
         } catch (SQLException e) {
